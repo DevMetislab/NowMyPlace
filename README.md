@@ -1,0 +1,2 @@
+# NowMyPlace
+NowMyPlace Api definitions
