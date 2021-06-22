@@ -1,0 +1,1674 @@
+openapi: 3.0.0
+info:
+  title: Gestionale Now My Place
+  description: Api Gestionale NomMyPlace.
+  version: 1.0.0
+servers:
+- url: http://nowmyplace/api
+  description: SwaggerHub API Auto Mocking
+- url: https://virtserver.swaggerhub.com/Metislab-Innovation/NowMyPlace/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: Authentication
+- name: NowMyPlaceBooking
+- name: Test
+paths:
+  /auth/login:
+    post:
+      tags:
+      - Authentication
+      summary: Login into NowMyPlace
+      operationId: userLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginPassword'
+        required: true
+      responses:
+        "200":
+          description: Returns a token. The user token is valid for a session and
+            until a new login.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      security:
+      - UserLogin: []
+  /auth/logout:
+    get:
+      tags:
+      - Authentication
+      summary: Logout NowMyPlace
+      operationId: userLogout
+      responses:
+        "200":
+          description: Logout valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      security:
+      - UserToken: []
+  /auth/passwordRecovery:
+    post:
+      tags:
+      - Authentication
+      summary: Recovery user password
+      operationId: passwordRecovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoverPassword'
+        required: true
+      responses:
+        "204":
+          description: An email is sent to the user with further instructions
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /auth/checkLinkRecovery:
+    post:
+      tags:
+      - Authentication
+      summary: Verify user link registration
+      operationId: checkLinkRecovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckLinkRecovery'
+        required: true
+      responses:
+        "204":
+          description: Link recovery valid
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /auth/checkLinkRecoveryPassword:
+    post:
+      tags:
+      - Authentication
+      summary: Verify user link registration
+      operationId: checkLinkRecoveryPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckLinkRecoveryPassword'
+        required: true
+      responses:
+        "204":
+          description: Password change
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /auth/passwordChange:
+    post:
+      tags:
+      - Authentication
+      summary: Change the user logged password
+      operationId: passwordChange
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      responses:
+        "204":
+          description: Password change
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      security:
+      - UserToken: []
+  /auth/userCheckRegistration:
+    post:
+      tags:
+      - Authentication
+      summary: Verify user link registration
+      operationId: userCheckRegistration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCheckRegistration'
+        required: true
+      responses:
+        "204":
+          description: Link registration valid
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /auth/userCheckRegistrationPassword:
+    post:
+      tags:
+      - Authentication
+      summary: Verify user link registration
+      operationId: userCheckRegistrationPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCheckRegistrationPassword'
+        required: true
+      responses:
+        "204":
+          description: Password change
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+  /selectUser:
+    post:
+      tags:
+      - Authentication
+      summary: Select an operative User
+      operationId: selectUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/selectUser'
+        required: true
+      responses:
+        "200":
+          description: TODO cosa serve per impersonare un utente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /user:
+    get:
+      tags:
+      - Authentication
+      summary: Get useroperative list
+      operationId: getUser
+      parameters:
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: list of operative users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /invite:
+    post:
+      tags:
+      - Authentication
+      summary: invite new User
+      operationId: invite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invite'
+        required: true
+      responses:
+        "204":
+          description: An email is sent to the user with further instructions
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /combo/{comboType}:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      summary: Return a list key-value of a combo
+      operationId: getCombo
+      parameters:
+      - name: comboType
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: A list key-value of a combo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /company:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      - Company
+      - List
+      summary: Return a list of the user's companies
+      operationId: getCompanyList
+      parameters:
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: A list of the user`s companies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    post:
+      tags:
+      - NowMyPlaceBooking
+      - Company
+      summary: add a new companies
+      operationId: newCompany
+      parameters:
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+        required: true
+      responses:
+        "200":
+          description: the new company created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "403":
+          description: Access is forbidden
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+      security:
+      - UserToken: []
+  /company/{companyId}:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      - Company
+      summary: Return a list of the user's companies
+      operationId: getCompany
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: the company selected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    put:
+      tags:
+      - NowMyPlaceBooking
+      - Company
+      summary: update a companies
+      operationId: updateCompany
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+        required: true
+      responses:
+        "200":
+          description: the company modified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    delete:
+      tags:
+      - NowMyPlaceBooking
+      - Company
+      summary: delete a company
+      operationId: deleteCompany
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Company deleted
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /company/{companyId}/planner:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      - Company
+      - Planner
+      - List
+      summary: Return a list of planner company
+      operationId: getCompanyPlanner
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: A list of the company`s planners
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    post:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      summary: add a new planners
+      operationId: newPlanner
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Planner'
+        required: true
+      responses:
+        "200":
+          description: the new planner created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /planner:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      - List
+      summary: Return a list of the user's planners
+      operationId: getPlannerList
+      parameters:
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: A list of the user`s planners
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /planner/{plannerId}:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      summary: Return a list of the user's planners
+      operationId: getPlanner
+      parameters:
+      - name: plannerId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: the planner selected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    put:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      summary: update a planner
+      operationId: updatePlanner
+      parameters:
+      - name: plannerId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Planner'
+        required: true
+      responses:
+        "200":
+          description: the planner modified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    delete:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      summary: delete a planner
+      operationId: deletePlanner
+      parameters:
+      - name: plannerId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Planner deleted
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /planner/{plannerId}/openingHours:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      - OpeningHour
+      - List
+      summary: Return a list of  openingHours planner
+      operationId: getPlannerOpeningHours
+      parameters:
+      - name: plannerId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: A list of the planner`s openingHour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_6'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    post:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      - OpeningHour
+      summary: add a new opening hours
+      operationId: newOpnenigHours
+      parameters:
+      - name: plannerId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpeningHour'
+        required: true
+      responses:
+        "200":
+          description: the new openingHour created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_7'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /openingHours/{openingHoursId}:
+    get:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      - OpeningHour
+      summary: Return a list of the user's companies
+      operationId: getOpeningHour
+      parameters:
+      - name: openingHoursId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: the openingHour selected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_7'
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    put:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      - OpeningHour
+      summary: add a new OpeningHours
+      operationId: updateOpeningHours
+      parameters:
+      - name: openingHoursId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpeningHour'
+        required: true
+      responses:
+        "204":
+          description: OpeningHour Modified
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+    delete:
+      tags:
+      - NowMyPlaceBooking
+      - Planner
+      - OpeningHour
+      summary: delete a OpeningHour
+      operationId: deleteOpeningHour
+      parameters:
+      - name: openingHoursId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limits the number of items on a page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Specifies the page number of the artists to be displayed
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: OpeningHour deleted
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "403":
+          description: Access is forbidden
+      security:
+      - UserToken: []
+  /hello:
+    get:
+      tags:
+      - Test
+      summary: Hello - Server example operation
+      description: Simple call
+      responses:
+        "200":
+          description: OK
+  /helloSecurity:
+    get:
+      tags:
+      - Test
+      summary: Hello with security - Server example operation
+      description: Simple call
+      responses:
+        "200":
+          description: OK
+      security:
+      - UserToken: []
+components:
+  schemas:
+    BaseResponse:
+      type: object
+      properties:
+        aInfo:
+          type: object
+          description: informazioni aggiuntive tecniche
+        aMessage:
+          type: string
+          description: eventuale messaggio
+        bRequestResult:
+          type: boolean
+          description: Result of operation
+      description: base elemnts of response
+    ComboList:
+      type: object
+      properties:
+        key:
+          type: integer
+          example: 1
+        value:
+          type: string
+          example: primavera
+      description: ComboList
+    CompanyList:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        company_name:
+          type: string
+          example: Metislab Innovation Srl
+      description: CompanyList
+    UserList:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_name:
+          type: string
+          example: Alessandro Rossi
+        user_email:
+          type: string
+          example: ale.rossi@metislab.net
+      description: UserList
+    PlannerList:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        company_name:
+          type: string
+          example: Planner di Metislab
+      description: PlannerList
+    Company:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        company_name:
+          type: string
+          example: Metislab Innovation Srl
+        vat:
+          type: string
+          example: "2826810356"
+        fiscal_code:
+          type: string
+          example: RSSLSN78E03612J
+        cuu_code:
+          type: string
+          example: ABCDE
+        pec:
+          type: string
+          format: email
+          example: metislab@pec.it
+        city:
+          type: string
+          example: Firenze
+        province:
+          type: string
+          example: Firenze
+        postal_code:
+          type: string
+          example: "50100"
+        address:
+          type: string
+          example: via Rossini
+        address_number:
+          type: string
+          example: 1/a
+        phone:
+          type: string
+          example: 055-7301565
+        mobile:
+          type: string
+          example: 329-768890
+        email:
+          type: string
+          format: email
+          example: example@mail.com
+        web_address:
+          type: string
+          example: https://www.google.it
+        facebook:
+          type: string
+          example: https://www.facebook.com/Cinghiale-28678788727
+        istagram:
+          type: string
+          example: https://instagram.com/metislab
+        notes:
+          type: string
+        cancel_policy:
+          type: string
+        insurance_code:
+          type: string
+        insurqanc_title:
+          type: string
+        insurance_attach:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      description: Company
+    Planner:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          example: Planner Metislab
+        description:
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer\
+            \ aliquam consequat ipsum, quis molestie tortor blandit sit amet. Proin\
+            \ et dolor id magna eleifend elementum. Quisque lacinia auctor enim, eu\
+            \ varius quam. Praesent viverra felis elit, eleifend dignissim dui vestibulum\
+            \ vel. Nulla ultrices neque augue, eget facilisis mauris tincidunt quis.\
+            \ Vestibulum mattis vestibulum rutrum. Aliquam ut interdum metus, pharetra\
+            \ ornare quam. Maecenas faucibus diam in lacinia cursus."
+        opening_hours:
+          type: object
+          readOnly: true
+        season:
+          type: string
+          example: 1 aprile - 25 ottobre
+        customers_notify:
+          type: boolean
+          example: true
+        booking_procedure:
+          type: integer
+          example: 1
+      description: Planner
+    OpeningHour:
+      title: Open hours schema
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        day:
+          type: string
+          format: date
+        week_day:
+          type: string
+          example: monday
+        from:
+          type: string
+          format: time
+        to:
+          type: string
+          format: time
+    Sites:
+      title: Sites schema
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          example: Molo nord
+        description:
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer\
+            \ aliquam consequat ipsum, quis molestie tortor blandit sit amet. Proin\
+            \ et dolor id magna eleifend elementum. Quisque lacinia auctor enim, eu\
+            \ varius quam. Praesent viverra felis elit, eleifend dignissim dui vestibulum\
+            \ vel. Nulla ultrices neque augue, eget facilisis mauris tincidunt quis.\
+            \ Vestibulum mattis vestibulum rutrum. Aliquam ut interdum metus, pharetra\
+            \ ornare quam. Maecenas faucibus diam in lacinia cursus."
+        latitude:
+          type: string
+          example: "43.84571535"
+        longitude:
+          type: string
+          example: "11.3740099545892"
+        indications:
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer\
+            \ aliquam consequat ipsum, quis molestie tortor blandit sit amet. Proin\
+            \ et dolor id magna eleifend elementum. Quisque lacinia auctor enim, eu\
+            \ varius quam. Praesent viverra felis elit, eleifend dignissim dui vestibulum\
+            \ vel. Nulla ultrices neque augue, eget facilisis mauris tincidunt quis.\
+            \ Vestibulum mattis vestibulum rutrum. Aliquam ut interdum metus, pharetra\
+            \ ornare quam. Maecenas faucibus diam in lacinia cursus."
+        type:
+          type: integer
+          description: combobox (sites_type)
+          example: 1
+        weather_index:
+          type: integer
+          description: combobox (sites_weather)
+          example: 3
+    Invite:
+      title: Invite User
+      required:
+      - companyId
+      - email
+      - role
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+        companyId:
+          type: integer
+        name:
+          type: string
+        surname:
+          type: string
+    RecoverPassword:
+      title: RecoveryPassword
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      example:
+        email: example@email.com
+    selectUser:
+      title: selectUser
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      example:
+        email: example@email.com
+    ChangePassword:
+      title: ChangePassword
+      required:
+      - newpassword
+      - newpasswordconfirm
+      - oldpassword
+      type: object
+      properties:
+        oldpassword:
+          type: string
+        newpassword:
+          type: string
+        newpasswordconfirm:
+          type: string
+    LoginPassword:
+      title: LoginPassword
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    UserCheckRegistration:
+      title: CheckRegistration
+      required:
+      - checkcode
+      - email
+      - uid
+      type: object
+      properties:
+        uid:
+          type: integer
+        checkcode:
+          type: string
+        email:
+          type: string
+          format: email
+    UserCheckRegistrationPassword:
+      title: CheckRegistrationPassword
+      required:
+      - checkcode
+      - email
+      - password
+      - passwordconfirm
+      - uid
+      type: object
+      properties:
+        uid:
+          type: integer
+        checkcode:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        passwordconfirm:
+          type: string
+    CheckLinkRecovery:
+      title: CheckLinkRecovery
+      required:
+      - checkcode
+      - email
+      - uid
+      type: object
+      properties:
+        uid:
+          type: integer
+        checkcode:
+          type: string
+        email:
+          type: string
+          format: email
+    CheckLinkRecoveryPassword:
+      title: CheckLinkRecoveryPassword
+      required:
+      - checkcode
+      - email
+      - password
+      - passwordconfirm
+      - uid
+      type: object
+      properties:
+        uid:
+          type: integer
+        checkcode:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        passwordconfirm:
+          type: string
+    UserToken:
+      title: UserToken
+      type: object
+      properties:
+        token:
+          type: string
+      example:
+        token: token
+    inline_response_200:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          users:
+            type: array
+            items:
+              $ref: '#/components/schemas/UserList'
+    inline_response_200_1:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          planners:
+            type: array
+            items:
+              $ref: '#/components/schemas/ComboList'
+    inline_response_200_2:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          companies:
+            type: array
+            items:
+              $ref: '#/components/schemas/CompanyList'
+    inline_response_200_3:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          company:
+            $ref: '#/components/schemas/Company'
+    inline_response_200_4:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          planners:
+            type: array
+            items:
+              $ref: '#/components/schemas/PlannerList'
+    inline_response_200_5:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          planner:
+            $ref: '#/components/schemas/Planner'
+    inline_response_200_6:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          openingHours:
+            type: array
+            items:
+              $ref: '#/components/schemas/OpeningHour'
+    inline_response_200_7:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
+          openingHour:
+            $ref: '#/components/schemas/OpeningHour'
+  responses:
+    "400Error":
+      description: Invalid Data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+    "401Error":
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          style: simple
+          explode: false
+          schema:
+            type: string
+    "403Error":
+      description: Access is forbidden
+  parameters:
+    PageLimit:
+      name: limit
+      in: query
+      description: Limits the number of items on a page
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+    PageOffset:
+      name: offset
+      in: query
+      description: Specifies the page number of the artists to be displayed
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+  securitySchemes:
+    UserLogin:
+      type: http
+      scheme: basic
+    UserToken:
+      type: http
+      description: An alphanumeric string 64 characters length token generated after
+        every login
+      scheme: bearer
+      bearerFormat: JWT
