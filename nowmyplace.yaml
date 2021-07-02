@@ -427,23 +427,6 @@ paths:
       - Company
       summary: add a new companies
       operationId: newCompany
-      parameters:
-      - name: limit
-        in: query
-        description: Limits the number of items on a page
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-      - name: offset
-        in: query
-        description: Specifies the page number of the artists to be displayed
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
       requestBody:
         content:
           application/json:
