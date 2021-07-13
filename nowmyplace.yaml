@@ -172,6 +172,35 @@ paths:
                 type: string
       security:
       - UserToken: []
+  /auth/emailChange:
+    post:
+      tags:
+      - Authentication
+      summary: Change the user email
+      operationId: emailChange
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeEmail'
+        required: true
+      responses:
+        "204":
+          description: Password change
+        "400":
+          description: Invalid Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        "401":
+          description: Authentication information is missing or invalid
+          headers:
+            WWW_Authenticate:
+              style: simple
+              explode: false
+              schema:
+                type: string
   /auth/userCheckRegistration:
     post:
       tags:
@@ -185,8 +214,12 @@ paths:
               $ref: '#/components/schemas/UserCheckRegistration'
         required: true
       responses:
-        "204":
-          description: Link registration valid
+        "200":
+          description: informazione utente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
         "400":
           description: Invalid Data
           content:
@@ -280,7 +313,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                $ref: '#/components/schemas/inline_response_200_1'
         "400":
           description: Invalid Data
           content:
@@ -352,7 +385,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                $ref: '#/components/schemas/inline_response_200_2'
         "400":
           description: Invalid Data
           content:
@@ -402,7 +435,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_2'
+                $ref: '#/components/schemas/inline_response_200_3'
         "400":
           description: Invalid Data
           content:
@@ -439,7 +472,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_3'
+                $ref: '#/components/schemas/inline_response_200_4'
         "400":
           description: Invalid Data
           content:
@@ -463,7 +496,7 @@ paths:
       tags:
       - NowMyPlaceBooking
       - Company
-      summary: Return a list of the user's companies
+      summary: Return selected company
       operationId: getCompany
       parameters:
       - name: companyId
@@ -479,7 +512,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_3'
+                $ref: '#/components/schemas/inline_response_200_4'
         "400":
           description: Invalid Data
           content:
@@ -524,7 +557,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_3'
+                $ref: '#/components/schemas/inline_response_200_4'
         "400":
           description: Invalid Data
           content:
@@ -617,7 +650,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_4'
+                $ref: '#/components/schemas/inline_response_200_5'
         "400":
           description: Invalid Data
           content:
@@ -678,7 +711,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                $ref: '#/components/schemas/inline_response_200_6'
         "400":
           description: Invalid Data
           content:
@@ -728,7 +761,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_4'
+                $ref: '#/components/schemas/inline_response_200_5'
         "400":
           description: Invalid Data
           content:
@@ -768,7 +801,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                $ref: '#/components/schemas/inline_response_200_6'
         "400":
           description: Invalid Data
           content:
@@ -813,7 +846,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                $ref: '#/components/schemas/inline_response_200_6'
         "400":
           description: Invalid Data
           content:
@@ -906,7 +939,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_6'
+                $ref: '#/components/schemas/inline_response_200_7'
         "400":
           description: Invalid Data
           content:
@@ -968,7 +1001,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_7'
+                $ref: '#/components/schemas/inline_response_200_8'
         "400":
           description: Invalid Data
           content:
@@ -1025,7 +1058,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_7'
+                $ref: '#/components/schemas/inline_response_200_8'
         "400":
           description: Invalid Data
           content:
@@ -1438,6 +1471,17 @@ components:
           format: email
       example:
         email: example@email.com
+    ChangeEmail:
+      title: ChangeEmail
+      required:
+      - newemail
+      - oldemail
+      type: object
+      properties:
+        oldemail:
+          type: string
+        newemail:
+          type: string
     ChangePassword:
       title: ChangePassword
       required:
@@ -1467,7 +1511,6 @@ components:
       title: CheckRegistration
       required:
       - checkcode
-      - email
       - uid
       type: object
       properties:
@@ -1475,9 +1518,16 @@ components:
           type: integer
         checkcode:
           type: string
+    UserCheckRegistrationResponse:
+      type: object
+      properties:
         email:
           type: string
-          format: email
+          description: email
+        username:
+          type: string
+          description: Username
+      description: Response of checkuserRegistration
     UserCheckRegistrationPassword:
       title: CheckRegistrationPassword
       required:
@@ -1548,11 +1598,18 @@ components:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
         properties:
+          UserInfo:
+            $ref: '#/components/schemas/UserCheckRegistrationResponse'
+    inline_response_200_1:
+      allOf:
+      - $ref: '#/components/schemas/BaseResponse'
+      - type: object
+        properties:
           users:
             type: array
             items:
               $ref: '#/components/schemas/UserList'
-    inline_response_200_1:
+    inline_response_200_2:
       allOf:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
@@ -1561,7 +1618,7 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ComboList'
-    inline_response_200_2:
+    inline_response_200_3:
       allOf:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
@@ -1570,14 +1627,14 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/CompanyList'
-    inline_response_200_3:
+    inline_response_200_4:
       allOf:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
         properties:
           company:
             $ref: '#/components/schemas/Company'
-    inline_response_200_4:
+    inline_response_200_5:
       allOf:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
@@ -1586,14 +1643,14 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/PlannerList'
-    inline_response_200_5:
+    inline_response_200_6:
       allOf:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
         properties:
           planner:
             $ref: '#/components/schemas/Planner'
-    inline_response_200_6:
+    inline_response_200_7:
       allOf:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
@@ -1602,7 +1659,7 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/OpeningHour'
-    inline_response_200_7:
+    inline_response_200_8:
       allOf:
       - $ref: '#/components/schemas/BaseResponse'
       - type: object
